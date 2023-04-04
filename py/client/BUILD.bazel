@@ -1,0 +1,26 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+# gazelle:resolve py proto.test_pb2_grpc //proto:test_grpc_py_library
+# gazelle:resolve py proto.test_pb2 //proto:test_py_library
+
+py_library(
+    name = "client",
+    srcs = ["client.py"],
+    imports = ["../.."],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//proto:test_grpc_py_library",
+        "//proto:test_py_library",
+        "@pip_argparse//:pkg",
+        "@pip_grpcio//:pkg",
+    ],
+)
+
+py_binary(
+    name = "client_bin",
+    srcs = ["__main__.py"],
+    imports = ["../.."],
+    main = "__main__.py",
+    visibility = ["//:__subpackages__"],
+    deps = [":client"],
+)

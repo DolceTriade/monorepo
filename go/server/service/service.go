@@ -22,6 +22,7 @@ func Register(log *zap.SugaredLogger, s *grpc.Server) {
 }
 
 func (s *Service) Test(ctx context.Context, req *pb.TestRequest) (*pb.TestResponse, error) {
+	s.log.Infof("Handling RPC: %v", req)
 	return &pb.TestResponse{
 		Response: req.Request,
 	}, nil

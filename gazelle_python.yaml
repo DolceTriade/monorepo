@@ -5,6 +5,42 @@
 
 manifest:
   modules_mapping:
+    2ec0e72aa72355e6eccf__mypyc: black
+    argparse: argparse
+    black: black
+    black.brackets: black
+    black.cache: black
+    black.comments: black
+    black.concurrency: black
+    black.const: black
+    black.debug: black
+    black.files: black
+    black.handle_ipynb_magics: black
+    black.linegen: black
+    black.lines: black
+    black.mode: black
+    black.nodes: black
+    black.numerics: black
+    black.output: black
+    black.parsing: black
+    black.report: black
+    black.rusty: black
+    black.strings: black
+    black.trans: black
+    blackd: black
+    blackd.middlewares: black
+    blib2to3: black
+    blib2to3.pgen2: black
+    blib2to3.pgen2.conv: black
+    blib2to3.pgen2.driver: black
+    blib2to3.pgen2.grammar: black
+    blib2to3.pgen2.literals: black
+    blib2to3.pgen2.parse: black
+    blib2to3.pgen2.pgen: black
+    blib2to3.pgen2.token: black
+    blib2to3.pgen2.tokenize: black
+    blib2to3.pygram: black
+    blib2to3.pytree: black
     certifi: certifi
     certifi.core: certifi
     charset_normalizer: charset_normalizer
@@ -20,6 +56,18 @@ manifest:
     charset_normalizer.models: charset_normalizer
     charset_normalizer.utils: charset_normalizer
     charset_normalizer.version: charset_normalizer
+    click: click
+    click.core: click
+    click.decorators: click
+    click.exceptions: click
+    click.formatting: click
+    click.globals: click
+    click.parser: click
+    click.shell_completion: click
+    click.termui: click
+    click.testing: click
+    click.types: click
+    click.utils: click
     google.protobuf: protobuf
     google.protobuf.any_pb2: protobuf
     google.protobuf.api_pb2: protobuf
@@ -105,8 +153,30 @@ manifest:
     idna.intranges: idna
     idna.package_data: idna
     idna.uts46data: idna
+    mypy_extensions: mypy_extensions
+    packaging: packaging
+    packaging.markers: packaging
+    packaging.requirements: packaging
+    packaging.specifiers: packaging
+    packaging.tags: packaging
+    packaging.utils: packaging
+    packaging.version: packaging
+    pathspec: pathspec
+    pathspec.gitignore: pathspec
+    pathspec.pathspec: pathspec
+    pathspec.pattern: pathspec
+    pathspec.patterns: pathspec
+    pathspec.patterns.gitwildmatch: pathspec
+    pathspec.util: pathspec
     pkg_resources: setuptools
     pkg_resources.extern: setuptools
+    platformdirs: platformdirs
+    platformdirs.android: platformdirs
+    platformdirs.api: platformdirs
+    platformdirs.macos: platformdirs
+    platformdirs.unix: platformdirs
+    platformdirs.version: platformdirs
+    platformdirs.windows: platformdirs
     requests: requests
     requests.adapters: requests
     requests.api: requests
@@ -177,6 +247,7 @@ manifest:
     setuptools.version: setuptools
     setuptools.wheel: setuptools
     setuptools.windows_support: setuptools
+    tomli: tomli
     urllib3: urllib3
     urllib3.connection: urllib3
     urllib3.connectionpool: urllib3
@@ -211,4 +282,4 @@ manifest:
     urllib3.util.wait: urllib3
   pip_repository:
     name: pip
-integrity: f9ff6933a741eaf4e5d13f7fdcde88181d8140d7755c02d3a906c1ca36821875
+integrity: 3b8efcf6fe33e3614df4dce365d87d97b2ac93e5f812298cb208e1e06b6e4aad

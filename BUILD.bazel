@@ -3,7 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "TOOLS_NOGO")
 load("@com_github_sluongng_nogo_analyzer//staticcheck:def.bzl", "ANALYZERS", "staticcheck_analyzers")
 load("//nogo:lib.bzl", "nogo")
 load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier", "buildifier_test")
-load("@pip//:requirements.bzl", "all_whl_requirements")
+load("@pip//:requirements.bzl", "all_whl_requirements", "entry_point")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
 load("@rules_python_gazelle_plugin//:def.bzl", "GAZELLE_PYTHON_RUNTIME_DEPS")
@@ -99,4 +99,9 @@ buildifier_test(
     name = "buildifier_test",
     no_sandbox = True,
     workspace = ":WORKSPACE.bazel",
+)
+
+alias(
+    name = "black",
+    actual = entry_point("black"),
 )
