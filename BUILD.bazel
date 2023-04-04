@@ -1,0 +1,41 @@
+load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@io_bazel_rules_go//go:def.bzl", "TOOLS_NOGO")
+load("@com_github_sluongng_nogo_analyzer//staticcheck:def.bzl", "ANALYZERS", "staticcheck_analyzers")
+load("//nogo:lib.bzl", "nogo")
+load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier", "buildifier_test")
+
+nogo(
+    name = "lint",
+    config = {
+        "_base": {
+            "exclude_files": {
+                "external/": "third_party",
+                "proto/": "generated protobuf",
+            },
+        },
+    },
+    visibility = ["//visibility:public"],  # must have public visibility
+    deps = TOOLS_NOGO + staticcheck_analyzers(ANALYZERS),
+)
+
+# gazelle:prefix github.com/DolceTriade/monorepo
+gazelle(name = "gazelle")
+
+gazelle(
+    name = "gazelle-update-repos",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=third_party/go/deps.bzl%go_third_party_deps",
+    ],
+    command = "update-repos",
+)
+
+buildifier(
+    name = "buildifier",
+)
+
+buildifier_test(
+    name = "buildifier_test",
+    no_sandbox = True,
+    workspace = ":WORKSPACE.bazel",
+)
