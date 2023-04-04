@@ -1,8 +1,12 @@
-load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 load("@io_bazel_rules_go//go:def.bzl", "TOOLS_NOGO")
 load("@com_github_sluongng_nogo_analyzer//staticcheck:def.bzl", "ANALYZERS", "staticcheck_analyzers")
 load("//nogo:lib.bzl", "nogo")
 load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier", "buildifier_test")
+load("@pip//:requirements.bzl", "all_whl_requirements")
+load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
+load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
+load("@rules_python_gazelle_plugin//:def.bzl", "GAZELLE_PYTHON_RUNTIME_DEPS")
 
 nogo(
     name = "lint",
@@ -18,13 +22,70 @@ nogo(
     deps = TOOLS_NOGO + staticcheck_analyzers(ANALYZERS),
 )
 
+# This rule fetches the metadata for python packages we depend on. That data is
+# required for the gazelle_python_manifest rule to update our manifest file.
+modules_mapping(
+    name = "modules_map",
+    wheels = all_whl_requirements,
+)
+
+# Gazelle python extension needs a manifest file mapping from
+# an import to the installed package that provides it.
+# This macro produces two targets:
+# - //:gazelle_python_manifest.update can be used with `bazel run`
+#   to recalculate the manifest
+# - //:gazelle_python_manifest.test is a test target ensuring that
+#   the manifest doesn't need to be updated
+gazelle_python_manifest(
+    name = "gazelle_python_manifest",
+    modules_mapping = ":modules_map",
+    # This is what we called our `pip_install` rule, where third-party
+    # python libraries are loaded in BUILD files.
+    pip_repository_name = "pip",
+    # This should point to wherever we declare our python dependencies
+    # (the same as what we passed to the modules_mapping rule in WORKSPACE)
+    requirements = "//third_party/py:requirements.txt",
+)
+
 # gazelle:prefix github.com/DolceTriade/monorepo
-gazelle(name = "gazelle")
+# gazelle:python_root
+# gazelle:python_generation_mode package
+# gazelle:proto_plugin python implementation builtin:python
+# gazelle:proto_plugin protoc-gen-grpc-python implementation grpc:grpc:protoc-gen-grpc-python
+# gazelle:proto_rule proto_compile implementation stackb:rules_proto:proto_compile
+# gazelle:proto_rule proto_python_library implementation stackb:rules_proto:proto_py_library
+# gazelle:proto_rule proto_python_library deps @com_google_protobuf//:protobuf_python
+# gazelle:proto_rule proto_python_library visibility //visibility:public
+# gazelle:proto_rule grpc_py_library implementation stackb:rules_proto:grpc_py_library
+# TODO: add grpc_py_library deps
+# gazelle:proto_rule grpc_py_library visibility //visibility:public
+# gazelle:proto_language python plugin python
+# gazelle:proto_language python plugin protoc-gen-grpc-python
+# gazelle:proto_language python rule proto_compile
+# gazelle:proto_language python rule proto_python_library
+# gazelle:proto_language python rule grpc_py_library
+gazelle_binary(
+    name = "mygazelle",
+    languages = [
+        "@bazel_gazelle//language/proto",  # Built-in rule from gazelle for Protos.
+        "@bazel_gazelle//language/go",  # Built-in rule from gazelle for Golang.
+        # must be after the proto extension (order matters)
+        "@build_stack_rules_proto//language/protobuf",
+        "@rules_python_gazelle_plugin//python",  # Use gazelle from rules_python.
+    ],
+    visibility = ["//visibility:public"],
+)
+
+gazelle(
+    name = "gazelle",
+    data = GAZELLE_PYTHON_RUNTIME_DEPS,
+    gazelle = ":mygazelle",
+)
 
 gazelle(
     name = "gazelle-update-repos",
     args = [
-        "-from_file=go.mod",
+        "-from_file=go.work",
         "-to_macro=third_party/go/deps.bzl%go_third_party_deps",
     ],
     command = "update-repos",
