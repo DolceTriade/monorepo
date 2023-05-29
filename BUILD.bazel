@@ -49,7 +49,7 @@ gazelle_python_manifest(
 
 # gazelle:prefix github.com/DolceTriade/monorepo
 # gazelle:python_root
-# gazelle:python_generation_mode package
+# gazelle:python_generation_mode fine
 # gazelle:proto_plugin python implementation builtin:python
 # gazelle:proto_plugin protoc-gen-grpc-python implementation grpc:grpc:protoc-gen-grpc-python
 # gazelle:proto_rule proto_compile implementation stackb:rules_proto:proto_compile

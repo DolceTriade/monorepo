@@ -186,3 +186,16 @@ http_archive(
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
+
+RULES_APPIMAGE_VER = "1.0.0"
+
+http_archive(
+    name = "rules_appimage",
+    sha256 = "3a8abc9093eb920f045de1d623bf10f8950c3cf7fb9e13ef35c5d06f634ccb37",
+    strip_prefix = "rules_appimage-{}".format(RULES_APPIMAGE_VER),
+    urls = ["https://github.com/lalten/rules_appimage/archive/refs/tags/v{}.tar.gz".format(RULES_APPIMAGE_VER)],
+)
+
+load("@rules_appimage//:deps.bzl", "rules_appimage_deps")
+
+rules_appimage_deps()
