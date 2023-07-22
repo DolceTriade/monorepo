@@ -1,0 +1,34 @@
+name: Gerrit Dispatch
+on:
+- gerrit_dispatch
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  runtrybot:
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        shell: bash
+    if: ${{ github.event.client_payload.type == 'gerrit' }}
+    steps:
+    - name: Write netrc file for Gerrit
+      run: |-
+        cat <<EOD > ~/.netrc
+        machine gerrit.dev.edge.aviatrix.com
+        login gha
+        password ${{ secrets.GERRIT_GHA_PASSWORD }}
+        EOD
+        chmod 600 ~/.netrc
+    - name: Trigger CI
+      run: |-
+        mkdir tmpgit
+        cd tmpgit
+        git init
+        git config user.name gha
+        git config user.email noreply@aviatrix.com
+        git fetch https://gha@gerrit.dev.aviatrix.com/a/DolceTriade/monorepo ${{ github.event.client_payload.payload.ref }}
+        git checkout -b ci/${{ github.event.client_payload.payload.changeID }}/${{ github.event.client_payload.payload.commit }} FETCH_HEAD
+        git push https://github.com/DolceTriade/monorepo ci/${{ github.event.client_payload.payload.changeID }}/${{ github.event.client_payload.payload.commit }}%
