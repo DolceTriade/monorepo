@@ -24,9 +24,41 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: Trigger CI
+      id: trigger
       run: |-
         git config user.name gha
         git config user.email noreply@aviatrix.com
         git fetch https://gha@gerrit.dev.edge.aviatrix.com/a/DolceTriade/monorepo ${{ github.event.client_payload.ref }}
-        git checkout -b ci/${{ github.event.client_payload.changeID }}/${{ github.event.client_payload.commit }} FETCH_HEAD
-        git push origin ci/${{ github.event.client_payload.changeID }}/${{ github.event.client_payload.commit }}
+        export BRANCH=ci/${{ github.event.client_payload.changeID }}/${{ github.event.client_payload.commit }}
+        git checkout -b "${BRANCH}" FETCH_HEAD
+        git push origin "${BRANCH}"
+        echo "branch="${BRANCH}" >> "$GITHUB_OUTPUT"
+    - name: Comment on run
+      run: |-
+        curl -n -X POST "https://gerrit.dev.edge.aviatrix.com/a/changes/${{ github.event.client_payload.changeID }}/revisions/${{ github.event.client_payload.commit }}/review" \
+          -H "Content-Type: application/json" \
+          -d "{ 'tag': 'gerrit~init', 'message': 'GHA Run Started: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' }"
+    - name: Wait for workflow completion
+      run: |-
+        export BRANCH=${{ steps.trigger.outputs.branch }}
+        while true; do
+          OUT="$(gh run list --branch "${BRANCH}" --json status,name,url,conclusion)"
+          if [[ "$(echo "${OUT}" | jq 'map(select(.status == "in_progress")) | length')" == "0" ]]; then
+            break
+          fi
+          sleep 10
+        done
+        echo "${OUT}" >> $GITHUB_STEP_SUMMARY
+        if [[ "$(echo "${OUT}" | jq 'map(select(.conclusion == "failure")) | length')" != "0" ]]; then
+          curl -n -X POST "https://gerrit.dev.edge.aviatrix.com/a/changes/${{ github.event.client_payload.changeID }}/revisions/${{ github.event.client_payload.commit }}/review" \
+            -H "Content-Type: application/json" \
+            -d "{ 'tag': 'gerrit~result', 'message': 'GHA Failure', 'labels': {"Verified": -1} }"
+        else
+          curl -n -X POST "https://gerrit.dev.edge.aviatrix.com/a/changes/${{ github.event.client_payload.changeID }}/revisions/${{ github.event.client_payload.commit }}/review" \
+            -H "Content-Type: application/json" \
+            -d "{ 'tag': 'gerrit~result', 'message': 'GHA Success', 'labels': {"Verified": 1} }"
+        fi
+    - name: "Delete branch"
+      if: always()
+      run: |-
+        git push origin ":${{ steps.trigger.outputs.branch }}"
