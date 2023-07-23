@@ -1,6 +1,6 @@
 name: Gerrit Dispatch
 on:
-- workflow_dispatch
+- repository_dispatch
 
 permissions:
   contents: write
