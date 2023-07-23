@@ -29,6 +29,6 @@ jobs:
         git init
         git config user.name gha
         git config user.email noreply@aviatrix.com
-        git fetch https://gha@gerrit.dev.edge.aviatrix.com/a/DolceTriade/monorepo ${{ github.event.client_payload.payload.ref }}
-        git checkout -b ci/${{ github.event.client_payload.payload.changeID }}/${{ github.event.client_payload.payload.commit }} FETCH_HEAD
-        git push https://github.com/DolceTriade/monorepo ci/${{ github.event.client_payload.payload.changeID }}/${{ github.event.client_payload.payload.commit }}%
+        git fetch https://gha@gerrit.dev.edge.aviatrix.com/a/DolceTriade/monorepo ${{ github.event.client_payload.ref }}
+        git checkout -b ci/${{ github.event.client_payload.changeID }}/${{ github.event.client_payload.commit }} FETCH_HEAD
+        git push https://github.com/DolceTriade/monorepo ci/${{ github.event.client_payload.payload.changeID }}/${{ github.event.client_payload.commit }}%
