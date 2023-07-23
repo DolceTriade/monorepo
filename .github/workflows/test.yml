@@ -1,0 +1,29 @@
+name: 'Test'
+
+on: push
+
+permissions:
+  contents: write
+  id-token: write
+  
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  bazel-build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: bazelbuild/setup-bazelisk@v2        
+      - name: Mount bazel cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.cache/bazel"
+          key: bazel
+      - run: echo "build --disk_cache=~/.cache/bazel" > ~/.bazelrc
+      - run: bazel build -c opt //...
+      - run: bazel test -c opt --test_output=errors //...
