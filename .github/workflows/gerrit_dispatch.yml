@@ -29,10 +29,10 @@ jobs:
         git config user.name gha
         git config user.email noreply@aviatrix.com
         git fetch https://gha@gerrit.dev.edge.aviatrix.com/a/DolceTriade/monorepo ${{ github.event.client_payload.ref }}
-        export BRANCH=ci/${{ github.event.client_payload.changeID }}/${{ github.event.client_payload.commit }}
+        export BRANCH="ci/${{ github.event.client_payload.changeID }}/${{ github.event.client_payload.commit }}"
         git checkout -b "${BRANCH}" FETCH_HEAD
         git push origin "${BRANCH}"
-        echo "branch="${BRANCH}" >> "$GITHUB_OUTPUT"
+        echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
     - name: Comment on run
       run: |-
         curl -n -X POST "https://gerrit.dev.edge.aviatrix.com/a/changes/${{ github.event.client_payload.changeID }}/revisions/${{ github.event.client_payload.commit }}/review" \
