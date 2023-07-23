@@ -40,7 +40,7 @@ jobs:
           -d "{ 'tag': 'gerrit~init', 'message': 'GHA Run Started: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' }"
     - name: Wait for workflow completion
       env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |-
         export BRANCH=${{ steps.trigger.outputs.branch }}
         while true; do
