@@ -24,7 +24,7 @@ jobs:
         chmod 600 ~/.netrc
     - uses: actions/checkout@v3
       with:
-        token: ${{ secrets.PAT }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Trigger CI
       run: |-
         git config user.name gha
