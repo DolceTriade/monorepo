@@ -42,9 +42,11 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |-
+        sleep 60  # Hack to let runs get triggered
         export BRANCH=${{ steps.trigger.outputs.branch }}
         while true; do
           OUT="$(gh run list --branch "${BRANCH}" --json status,name,url,conclusion)"
+          echo "${OUT}"
           if [[ "$(echo "${OUT}" | jq 'map(select(.status == "in_progress")) | length')" == "0" ]]; then
             break
           fi
