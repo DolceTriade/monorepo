@@ -57,11 +57,14 @@ jobs:
           curl -n -X POST "https://gerrit.dev.edge.aviatrix.com/a/changes/${{ github.event.client_payload.changeID }}/revisions/${{ github.event.client_payload.commit }}/review" \
             -H "Content-Type: application/json" \
             -d "{ 'tag': 'gerrit~result', 'message': 'GHA Failure', 'labels': {"Verified": -1} }"
+            ret=1
         else
           curl -n -X POST "https://gerrit.dev.edge.aviatrix.com/a/changes/${{ github.event.client_payload.changeID }}/revisions/${{ github.event.client_payload.commit }}/review" \
             -H "Content-Type: application/json" \
             -d "{ 'tag': 'gerrit~result', 'message': 'GHA Success', 'labels': {"Verified": 1} }"
+            ret=0
         fi
+        exit "${ret}"
     - name: "Delete branch"
       if: always()
       run: |-
