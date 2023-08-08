@@ -4,6 +4,107 @@ workspace(
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+################################################
+# Make sure we are pulling a recent skylib
+################################################
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+    ],
+)
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+################################################
+# Pulling rules_nixpkgs (to use nix-sourced compilers instead of native toolchains)
+################################################
+http_archive(
+    name = "io_tweag_rules_nixpkgs",
+    sha256 = "657db2e70d933f252735a5a5c9f532c4cd5e77018b9d7256bc9c7b80a01e96b5",
+    strip_prefix = "rules_nixpkgs-816e913f41d161659cbd1e49ff77694853398a3a",
+    urls = ["https://github.com/tweag/rules_nixpkgs/archive/816e913f41d161659cbd1e49ff77694853398a3a.tar.gz"],
+)
+
+load("@io_tweag_rules_nixpkgs//nixpkgs:repositories.bzl", "rules_nixpkgs_dependencies")
+
+# load everything that rules_nixpkgs rules need to work
+rules_nixpkgs_dependencies()
+
+load(
+    "@io_tweag_rules_nixpkgs//nixpkgs:nixpkgs.bzl",
+    "nixpkgs_cc_configure",
+    "nixpkgs_java_configure",
+    "nixpkgs_local_repository",
+    "nixpkgs_python_configure",
+    "nixpkgs_sh_posix_configure",
+)
+
+nixpkgs_local_repository(
+    name = "nixpkgs",
+    nix_file_deps = ["//:flake.lock"],
+    nix_flake_lock_file = "//:flake.lock",
+)
+
+################################################
+# Shell Rules
+################################################
+http_archive(
+    name = "rules_sh",
+    sha256 = "d668bb32f112ead69c58bde2cae62f6b8acefe759a8c95a2d80ff6a85af5ac5e",
+    strip_prefix = "rules_sh-0.3.0",
+    urls = ["https://github.com/tweag/rules_sh/archive/v0.3.0.tar.gz"],
+)
+
+load("@rules_sh//sh:repositories.bzl", "rules_sh_dependencies")
+
+rules_sh_dependencies()
+
+nixpkgs_sh_posix_configure(
+    repository = "@nixpkgs",
+)
+
+################################################
+# Java rules (to resolve JVM deps)
+################################################
+nixpkgs_java_configure(
+    attribute_path = "jdk11.home",
+    repository = "@nixpkgs",
+    toolchain = True,
+    toolchain_name = "nixpkgs_java",
+    toolchain_version = "11",
+)
+
+################################################
+# C/C++ Rules (source from nixpkgs)
+################################################
+nixpkgs_cc_configure(
+    name = "nixpkgs_config_cc",
+    nix_file = "//bazel/nix/cc:cc.nix",
+    repository = "@nixpkgs",
+)
+
+# load rules_cc
+http_archive(
+    name = "rules_cc",
+    sha256 = "4dccbfd22c0def164c8f47458bd50e0c7148f3d92002cdb459c2a96a68498241",
+    urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.1/rules_cc-0.0.1.tar.gz"],
+)
+
+load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies", "rules_cc_toolchains")
+
+rules_cc_dependencies()
+
+rules_cc_toolchains()
+
+################################################
+# Golang Rules
+################################################
+
 http_archive(
     name = "io_bazel_rules_go",
     sha256 = "dd926a88a564a9246713a9c00b35315f54cbd46b31a26d5d8fb264c07045f05d",
@@ -13,20 +114,28 @@ http_archive(
     ],
 )
 
+load("@io_tweag_rules_nixpkgs//nixpkgs:toolchains/go.bzl", "nixpkgs_go_configure")
+
+nixpkgs_go_configure(repository = "@nixpkgs")
+
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.20.1")
-
+# Add lint checking
 go_register_toolchains(nogo = "@//:lint")
 
+################################################
+# Gazelle Rules (buildfile generation)
+################################################
+# Use our own gazelle to support our custom resolve_regexp directive.
+# TODO(hmodi): Wait until https://github.com/bazelbuild/bazel-gazelle/pull/1542 is merged and in a release
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "ecba0f04f96b4960a5b250c8e8eeec42281035970aa8852dda73098274d14a1d",
+    sha256 = "c8089fa552b59106e974b14f3a791dd6641fdcd52b5ddbe31759f0e5fa931d24",
+    strip_prefix = "bazel-gazelle-0.2",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.29.0/bazel-gazelle-v0.29.0.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.29.0/bazel-gazelle-v0.29.0.tar.gz",
+        "https://github.com/DolceTriade/bazel-gazelle/archive/refs/tags/v0.2.tar.gz",
     ],
 )
 
@@ -45,25 +154,28 @@ gazelle_dependencies(go_repository_default_config = "//:WORKSPACE.bazel")
 # Go static analysis tool staticcheck.
 http_archive(
     name = "com_github_sluongng_nogo_analyzer",
-    sha256 = "34b8831e1265ba8bb7c1db15f1a82b912fe8728c8a0ffb523ed4696ddbde7ed4",
-    strip_prefix = "nogo-analyzer-d6a3958307f2b485cda307f453e06db025415177",
+    sha256 = "a74a5e44751d292d17bd879e5aa8b40baa94b5dc2f043df1e3acbb3e23ead073",
+    strip_prefix = "nogo-analyzer-0.0.2",
     urls = [
-        "https://github.com/sluongng/nogo-analyzer/archive/d6a3958307f2b485cda307f453e06db025415177.zip",
+        "https://github.com/sluongng/nogo-analyzer/archive/refs/tags/v0.0.2.tar.gz",
     ],
 )
 
 # Nogo linter libraries
-load("@com_github_sluongng_nogo_analyzer//staticcheck:deps.bzl", "staticcheck_deps")
+load("@com_github_sluongng_nogo_analyzer//staticcheck:deps.bzl", "staticcheck")
 
-staticcheck_deps()
+staticcheck()
 
+################################################
+# Protobuf Rules
+################################################
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "d0f5f605d0d656007ce6c8b5a82df3037e1d8fe8b121ed42e536f569dec16113",
-    strip_prefix = "protobuf-3.14.0",
+    sha256 = "dc167b7d23ec0d6e4a3d4eae1798de6c8d162e69fa136d39753aaeb7a6e1289d",
+    strip_prefix = "protobuf-23.1",
     urls = [
-        "https://mirror.bazel.build/github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
-        "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
+        "https://mirror.bazel.build/github.com/protocolbuffers/protobuf/archive/v23.1.tar.gz",
+        "https://github.com/protocolbuffers/protobuf/archive/v23.1.tar.gz",
     ],
 )
 
@@ -71,6 +183,9 @@ load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 
 protobuf_deps()
 
+################################################
+# Python Rules
+################################################
 http_archive(
     name = "rules_python",
     sha256 = "a644da969b6824cc87f8fe7b18101a8a6c57da5db39caa6566ec6109f37d2141",
@@ -78,19 +193,11 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_python/releases/download/0.20.0/rules_python-0.20.0.tar.gz",
 )
 
-load("@rules_python//python:repositories.bzl", "py_repositories", "python_register_toolchains")
+nixpkgs_python_configure(repository = "@nixpkgs")
+
 load("@rules_python//python/pip_install:repositories.bzl", "pip_install_dependencies")
 
-py_repositories()
-
 pip_install_dependencies()
-
-python_register_toolchains(
-    name = "python",
-    # Available versions are listed in @rules_python//python:versions.bzl.
-    # We recommend using the same version your team is already standardized on.
-    python_version = "3.10",
-)
 
 load("@rules_python//python:pip.bzl", "pip_parse")
 
@@ -117,16 +224,18 @@ load("@rules_python_gazelle_plugin//:deps.bzl", _py_gazelle_deps = "gazelle_deps
 
 _py_gazelle_deps()
 
-# Release: v2.0.1
+# Our own version of stackb/rules_proto with Python proto cross resolution support.
+# Once https://github.com/stackb/rules_proto/pull/316 is merged, we can start using upstream.
+# TODO(hmodi): Should we consider moving this into an Aviatrix org repo?
+# Release: v0.2
 # TargetCommitish: master
-# Date: 2022-10-20 02:38:27 +0000 UTC
-# URL: https://github.com/stackb/rules_proto/releases/tag/v2.0.1
-# Size: 2071295 (2.1 MB)
+# URL: https://github.com/DolceTriade/rules_proto/releases/tag/v0.2
+# Size: 2074370 (2.0 MB)
 http_archive(
     name = "build_stack_rules_proto",
-    sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
-    strip_prefix = "rules_proto-2.0.1",
-    urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
+    sha256 = "111e6495539f5009aabfbd52db76b9eb8981481b80a4adb81602d54111187412",
+    strip_prefix = "rules_proto-0.2",
+    urls = ["https://github.com/DolceTriade/rules_proto/archive/refs/tags/v0.2.tar.gz"],
 )
 
 load("@build_stack_rules_proto//deps:core_deps.bzl", "core_deps")
@@ -154,6 +263,9 @@ load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
 
+################################################
+# Swift Rules
+################################################
 http_archive(
     name = "build_bazel_rules_swift",
     sha256 = "a2fd565e527f83fb3f9eb07eb9737240e668c9242d3bc318712efa54a7deda97",
@@ -174,12 +286,15 @@ load(
 
 swift_rules_extra_dependencies()
 
+################################################
+# GRPC Rules
+################################################
 http_archive(
     name = "com_github_grpc_grpc",
-    sha256 = "40913dcf911afd515c9667abc532661e59b49b371bea1cb635546900bb10dbd2",
-    strip_prefix = "grpc-358bfb581feeda5bf17dd3b96da1074d84a6ef8d",
+    sha256 = "9cf1a69a921534ac0b760dcbefb900f3c2f735f56070bf0536506913bb5bfd74",
+    strip_prefix = "grpc-1.55.0",
     urls = [
-        "https://github.com/grpc/grpc/archive/358bfb581feeda5bf17dd3b96da1074d84a6ef8d.tar.gz",
+        "https://github.com/grpc/grpc/archive/refs/tags/v1.55.0.tar.gz",
     ],
 )
 
@@ -187,6 +302,9 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
 
+################################################
+# Appimage Rules
+################################################
 RULES_APPIMAGE_VER = "1.0.0"
 
 http_archive(
