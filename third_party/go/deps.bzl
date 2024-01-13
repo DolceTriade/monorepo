@@ -4,12 +4,6 @@ load("@bazel_gazelle//:deps.bzl", "go_repository")
 def go_third_party_deps():
     """Import all third party Golang deps."""
     go_repository(
-        name = "cc_mvdan_gofumpt",
-        importpath = "mvdan.cc/gofumpt",
-        sum = "h1:0EQ+Z56k8tXjj/6TQD25BFNKQXpCvT0rnansIc7Ug5E=",
-        version = "v0.5.0",
-    )
-    go_repository(
         name = "co_honnef_go_tools",
         importpath = "honnef.co/go/tools",
         sum = "h1:oFEHCKeID7to/3autwsWfnuv69j3NsfcXbvJKuIcep8=",
@@ -22,40 +16,10 @@ def go_third_party_deps():
         version = "v1.2.1",
     )
     go_repository(
-        name = "com_github_frankban_quicktest",
-        importpath = "github.com/frankban/quicktest",
-        sum = "h1:g2rn0vABPOOXmZUj+vbmUp0lPoXEMuhTpIluN0XL9UY=",
-        version = "v1.14.4",
-    )
-    go_repository(
-        name = "com_github_google_go_cmp",
-        importpath = "github.com/google/go-cmp",
-        sum = "h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=",
-        version = "v0.5.9",
-    )
-    go_repository(
         name = "com_github_kisielk_errcheck",
         importpath = "github.com/kisielk/errcheck",
         sum = "h1:dEKh+GLHcWm2oN34nMvDzn1sqI0i0WxPvrgiJA5JuM8=",
         version = "v1.6.3",
-    )
-    go_repository(
-        name = "com_github_kr_pretty",
-        importpath = "github.com/kr/pretty",
-        sum = "h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=",
-        version = "v0.3.1",
-    )
-    go_repository(
-        name = "com_github_kr_text",
-        importpath = "github.com/kr/text",
-        sum = "h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=",
-        version = "v0.2.0",
-    )
-    go_repository(
-        name = "com_github_rogpeppe_go_internal",
-        importpath = "github.com/rogpeppe/go-internal",
-        sum = "h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=",
-        version = "v1.10.0",
     )
     go_repository(
         name = "com_github_yuin_goldmark",
