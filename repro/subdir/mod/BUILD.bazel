@@ -1,0 +1,14 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "mod",
+    srcs = ["mod.go"],
+    importpath = "github.com/DolceTriade/monorepo/repro/subdir/mod",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "mod_test",
+    srcs = ["mod_test.go"],
+    embed = [":mod"],
+)

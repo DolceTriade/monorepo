@@ -1,2 +1,0 @@
-CONST1 = 1
-CONST2 = 2

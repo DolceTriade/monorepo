@@ -1,1 +1,71 @@
+load("@com_github_sluongng_nogo_analyzer//staticcheck:def.bzl", "ANALYZERS", "staticcheck_analyzers")
+load("//nogo:lib.bzl", "nogo")
+
+# List was generated using: bazel query @org_golang_x_tools//go/analysis/passes/... | grep go_default_library | grep -v test | sed 's/\(.*\)/"\1",/'
+TOOLS_NOGO = [
+    "@org_golang_x_tools//go/analysis/passes/asmdecl:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/assign:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/atomic:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/atomicalign:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/bools:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/buildssa:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/buildtag:go_default_library",
+    # This doesn't appear to work with bazel.
+    # "@org_golang_x_tools//go/analysis/passes/cgocall:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/composite:go_default_library",
+    # This check errors when you try to copy a struct with a lock.
+    "@org_golang_x_tools//go/analysis/passes/copylock:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/ctrlflow:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/deepequalerrors:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/errorsas:go_default_library",
+    # Sorting your structs can make them be more efficient. We don't do that.
+    # "@org_golang_x_tools//go/analysis/passes/fieldalignment:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/findcall:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/framepointer:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/httpresponse:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/ifaceassert:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/inspect:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/loopclosure:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/lostcancel:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/nilfunc:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/nilness:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/pkgfact:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/printf:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/reflectvaluecompare:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/shadow:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/shift:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/sigchanyzer:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/sortslice:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/stdmethods:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/stringintconv:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/structtag:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/timeformat:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/unmarshal:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/unreachable:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/unsafeptr:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/unusedresult:go_default_library",
+    # This checks for setting fields of a struct that are unused
+    "@org_golang_x_tools//go/analysis/passes/unusedwrite:go_default_library",
+    "@org_golang_x_tools//go/analysis/passes/usesgenerics:go_default_library",
+]
+
+nogo(
+    name = "lint",
+    config = {
+        "_base": {
+            "exclude_files": {
+                "external/": "third_party",
+                "proto/": "generated protobuf",
+                "testmain.go": "Generated test main for go tests.",
+            },
+        },
+    },
+    visibility = ["//visibility:public"],  # must have public visibility
+    deps = TOOLS_NOGO + staticcheck_analyzers(ANALYZERS) + [
+        "@com_github_sluongng_nogo_analyzer//goci-lint/errcheck",
+        "@com_github_sluongng_nogo_analyzer//goci-lint/ineffassign",
+        "@com_github_sluongng_nogo_analyzer//goci-lint/prealloc",
+    ],
+)
+
 exports_files(["lib.bzl"])
