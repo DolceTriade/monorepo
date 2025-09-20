@@ -1,0 +1,70 @@
+# Development Tools and Scripts
+# Build tools, development utilities, and automation scripts
+# Teams: Platform engineering with developer experience focus
+
+teams:
+  platform: ['devtools-eng', 'build-systems', 'automation-expert']
+  devex: ['dev-productivity', 'tooling-lead', 'workflow-optimizer']
+  backend: ['go-tooling', 'backend-tools']
+  security: ['secure-build', 'tool-auditor']
+
+rules:
+  - '*.sh':
+      description: Shell scripts and automation
+      owners: ['platform']
+      required: 1
+
+  - 'gopackagesdriver.sh':
+      description: Go packages driver for IDE integration
+      owners: ['backend', 'devex']
+      required: 1
+
+  - '**/*build*':
+      description: Build-related tools and scripts
+      owners: ['platform']
+      required: 1
+
+  - '**/*test*':
+      description: Testing tools and utilities
+      owners: ['platform', 'devex']
+      required: 1
+
+  - '**/*deploy*':
+      description: Deployment tools and scripts
+      owners: ['platform', 'security']
+      required: 2
+
+  - '**/*ci*':
+      description: CI/CD tools and configurations
+      owners: ['platform']
+      required: 1
+
+  - '**/*docker*':
+      description: Docker-related tools
+      owners: ['platform']
+      required: 1
+
+  - '**/*lint*':
+      description: Code linting and formatting tools
+      owners: ['devex']
+      required: 1
+
+  - '**/*generate*':
+      description: Code generation tools
+      owners: ['platform', 'devex']
+      required: 1
+
+  - '**/*migrate*':
+      description: Migration and upgrade tools
+      owners: ['platform', 'backend']
+      required: 2
+
+  - '**/*secret*':
+      description: Secret management tools
+      owners: ['security', 'platform']
+      required: 2
+
+  - '**/*monitor*':
+      description: Monitoring and observability tools
+      owners: ['platform']
+      required: 1

@@ -1,0 +1,71 @@
+# Third Party Dependencies
+# External libraries and security-critical dependency management
+# Teams: Security-first approach with platform and legal oversight
+
+teams:
+  security: ['sec-architect', 'vuln-scanner', 'license-reviewer']
+  platform: ['dep-manager', 'build-eng', 'supply-chain']
+  legal: ['compliance-officer', 'oss-legal', 'license-expert']
+  backend: ['go-deps-owner', 'backend-arch']
+  python: ['py-deps-owner', 'ml-platform']
+
+rules:
+  - '**/*requirements*.txt':
+      description: Python dependency specifications
+      owners: ['python', 'security']
+      required: 2
+
+  - 'py/requirements.txt':
+      description: Core Python dependencies
+      owners: ['python', 'security', 'platform']
+      required: 2
+
+  - 'py/requirements.txt.in':
+      description: Python dependency constraints
+      owners: ['python', 'platform']
+      required: 2
+
+  - 'go/**':
+      description: Go third-party configurations
+      owners: ['backend', 'security']
+      required: 2
+
+  - 'go/deps.bzl':
+      description: Go dependency declarations for Bazel
+      owners: ['backend', 'platform']
+      required: 2
+
+  - 'BUILD.bazel':
+      description: Third-party build configurations
+      owners: ['platform', 'security']
+      required: 2
+
+  - '**/*license*':
+      description: License files and compliance
+      owners: ['legal', 'security']
+      required: 2
+
+  - '**/*vulnerable*':
+      description: Known vulnerable dependencies
+      owners: ['security']
+      required: 2
+
+  - '**/*crypto*':
+      description: Cryptographic libraries
+      owners: ['security', 'platform']
+      required: 2
+
+  - '**/*auth*':
+      description: Authentication libraries
+      owners: ['security', 'backend']
+      required: 2
+
+  - '**/*network*':
+      description: Networking and HTTP libraries
+      owners: ['platform', 'security']
+      required: 2
+
+  - '**/*parser*':
+      description: Data parsing libraries - injection risk
+      owners: ['security', 'platform']
+      required: 2

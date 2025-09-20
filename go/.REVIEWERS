@@ -1,0 +1,55 @@
+# Go Backend Microservice
+# High-performance API server with gRPC and REST endpoints
+# Teams: Backend specialists with security and platform oversight
+
+teams:
+  backend: ['go-expert', 'api-ninja', 'microservice-dev']
+  senior-backend: ['tech-lead-go', 'principal-eng', 'backend-architect']
+  security: ['sec-review', 'auth-specialist']
+  platform: ['sre-ops', 'monitoring-dev']
+
+rules:
+  - '*.go':
+      description: Go source code - core business logic
+      owners: ['backend']
+      required: 1
+
+  - 'main.go':
+      description: Application entry point - critical path
+      owners: ['backend', 'senior-backend']
+      required: 2
+
+  - 'service/**':
+      description: Core service implementation
+      owners: ['backend']
+      required: 1
+
+  - 'service/service.go':
+      description: Main service interface - architecture decisions
+      owners: ['senior-backend']
+      required: 1
+
+  - '**/*_test.go':
+      description: Unit and integration tests
+      owners: ['backend']
+      required: 1
+
+  - 'BUILD.bazel':
+      description: Build configuration for Go service
+      owners: ['backend', 'platform']
+      required: 1
+
+  - '**/*auth*':
+      description: Authentication and authorization code
+      owners: ['backend', 'security']
+      required: 2
+
+  - '**/*middleware*':
+      description: HTTP/gRPC middleware - cross-cutting concerns
+      owners: ['backend', 'senior-backend']
+      required: 1
+
+  - '**/*config*':
+      description: Service configuration
+      owners: ['backend', 'platform']
+      required: 1

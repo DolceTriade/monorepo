@@ -1,0 +1,75 @@
+# Python Fine-tuning Module
+# Advanced ML model fine-tuning and optimization
+# Teams: Research-focused with production ML oversight
+
+teams:
+  ml-research: ['research-lead', 'phd-ml', 'algorithm-expert']
+  ml-production: ['prod-ml-eng', 'model-ops', 'performance-opt']
+  data-science: ['senior-ds', 'feature-expert', 'validation-lead']
+  platform: ['ml-infra', 'gpu-specialist', 'distributed-systems']
+
+rules:
+  - '*.py':
+      description: Fine-tuning implementation
+      owners: ['ml-research']
+      required: 1
+
+  - '__init__.py':
+      description: Module initialization and exports
+      owners: ['ml-research', 'ml-production']
+      required: 1
+
+  - 'mod1.py':
+      description: Core fine-tuning algorithms
+      owners: ['ml-research']
+      required: 1
+
+  - 'mod2.py':
+      description: Training optimization routines
+      owners: ['ml-research', 'ml-production']
+      required: 2
+
+  - 'mod3.py':
+      description: Model evaluation and metrics
+      owners: ['ml-research', 'data-science']
+      required: 2
+
+  - 'init/**':
+      description: Initialization and bootstrap code
+      owners: ['ml-production']
+      required: 1
+
+  - 'init/consts.py':
+      description: Model constants and hyperparameters
+      owners: ['ml-research', 'data-science']
+      required: 2
+
+  - 'init/rexport.py':
+      description: Public API re-exports
+      owners: ['ml-production']
+      required: 1
+
+  - 'BUILD.bazel':
+      description: ML module build configuration
+      owners: ['ml-production', 'platform']
+      required: 1
+
+  - '**/*hyperparameter*':
+      description: Hyperparameter tuning code
+      owners: ['ml-research', 'data-science']
+      required: 2
+
+  - '**/*distributed*':
+      description: Distributed training code
+      owners: ['platform', 'ml-production']
+      required: 2
+
+  - '**/*gpu*':
+      description: GPU acceleration and CUDA code
+      owners: ['platform']
+      required: 1
+
+  - '**/*optimization*':
+      description: Training optimization algorithms
+      owners: ['ml-research']
+      required: 1

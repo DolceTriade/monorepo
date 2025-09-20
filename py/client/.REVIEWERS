@@ -1,0 +1,65 @@
+# Python Client SDK
+# Customer-facing client library with API integration
+# Teams: Client SDK team with API compatibility oversight
+
+teams:
+  sdk: ['client-dev', 'sdk-maintainer', 'api-client-expert']
+  api: ['api-designer', 'backend-integration', 'contract-owner']
+  qa: ['sdk-tester', 'integration-qa', 'compatibility-tester']
+  docs: ['tech-writer', 'dev-advocate', 'example-creator']
+
+rules:
+  - '__main__.py':
+      description: Client application entry point
+      owners: ['sdk']
+      required: 1
+
+  - 'client.py':
+      description: Core client implementation - public API
+      owners: ['sdk', 'api']
+      required: 2
+
+  - '*.py':
+      description: Python client code
+      owners: ['sdk']
+      required: 1
+
+  - 'BUILD.bazel':
+      description: Client build and packaging configuration
+      owners: ['sdk']
+      required: 1
+
+  - '**/*auth*':
+      description: Authentication and API key handling
+      owners: ['sdk', 'api']
+      required: 2
+
+  - '**/*config*':
+      description: Client configuration and settings
+      owners: ['sdk']
+      required: 1
+
+  - '**/*example*':
+      description: Usage examples and demos
+      owners: ['docs', 'sdk']
+      required: 1
+
+  - '**/*test*':
+      description: Client tests and integration tests
+      owners: ['sdk', 'qa']
+      required: 1
+
+  - '**/*retry*':
+      description: Retry logic and error handling
+      owners: ['sdk', 'api']
+      required: 1
+
+  - '**/*http*':
+      description: HTTP client and request handling
+      owners: ['sdk']
+      required: 1
+
+  - '**/*serialize*':
+      description: Data serialization and protocol handling
+      owners: ['sdk', 'api']
+      required: 2

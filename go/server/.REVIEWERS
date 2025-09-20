@@ -1,0 +1,65 @@
+# Go API Server - Production HTTP/gRPC Service
+# Critical customer-facing API with high availability requirements
+# Teams: Specialized backend team with mandatory senior oversight
+
+teams:
+  backend: ['api-dev-1', 'api-dev-2', 'go-specialist']
+  senior-backend: ['senior-go-dev', 'api-architect', 'backend-lead']
+  security: ['sec-engineer', 'penetration-tester']
+  sre: ['reliability-eng', 'performance-expert', 'monitoring-lead']
+
+rules:
+  - 'main.go':
+      description: Server entry point - critical startup logic
+      owners: ['senior-backend']
+      required: 1
+
+  - '*.go':
+      description: Go server implementation
+      owners: ['backend']
+      required: 1
+
+  - 'service/*.go':
+      description: Core service business logic
+      owners: ['backend', 'senior-backend']
+      required: 2
+
+  - '**/*handler*':
+      description: HTTP request handlers - API endpoints
+      owners: ['backend']
+      required: 1
+
+  - '**/*middleware*':
+      description: HTTP middleware - security and observability
+      owners: ['backend', 'security']
+      required: 2
+
+  - '**/*auth*':
+      description: Authentication and authorization logic
+      owners: ['security']
+      required: 2
+
+  - '**/*security*':
+      description: Security-related code
+      owners: ['security']
+      required: 2
+
+  - '**/*_test.go':
+      description: Unit tests for server components
+      owners: ['backend']
+      required: 1
+
+  - 'BUILD.bazel':
+      description: Server build configuration
+      owners: ['backend', 'sre']
+      required: 1
+
+  - '**/*metric*':
+      description: Metrics and observability
+      owners: ['backend', 'sre']
+      required: 1
+
+  - '**/*config*':
+      description: Server configuration
+      owners: ['senior-backend', 'sre']
+      required: 1

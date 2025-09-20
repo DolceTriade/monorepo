@@ -1,0 +1,61 @@
+# NoGo Static Analysis Configuration
+# Go static analysis rules and code quality enforcement
+# Teams: Code quality focused with security and performance oversight
+
+teams:
+  code-quality: ['static-analysis', 'linter-expert', 'quality-eng']
+  security: ['sec-static-analysis', 'vuln-detection']
+  performance: ['perf-eng', 'optimization-lead']
+  backend: ['go-standards', 'code-reviewer']
+  platform: ['build-quality', 'ci-integration']
+
+rules:
+  - 'lib.bzl':
+      description: NoGo static analysis library definitions
+      owners: ['code-quality', 'platform']
+      required: 2
+
+  - 'BUILD.bazel':
+      description: Static analysis build configuration
+      owners: ['code-quality', 'platform']
+      required: 1
+
+  - '**/*security*':
+      description: Security-focused static analysis rules
+      owners: ['security', 'code-quality']
+      required: 2
+
+  - '**/*performance*':
+      description: Performance analysis configurations
+      owners: ['performance', 'code-quality']
+      required: 2
+
+  - '**/*memory*':
+      description: Memory leak and allocation analysis
+      owners: ['performance', 'backend']
+      required: 2
+
+  - '**/*concurrency*':
+      description: Concurrency and race condition detection
+      owners: ['backend', 'code-quality']
+      required: 2
+
+  - '**/*lint*':
+      description: Code style and formatting rules
+      owners: ['code-quality']
+      required: 1
+
+  - '**/*deadcode*':
+      description: Dead code detection rules
+      owners: ['code-quality', 'backend']
+      required: 1
+
+  - '**/*complexity*':
+      description: Code complexity analysis
+      owners: ['code-quality']
+      required: 1
+
+  - '**/*standard*':
+      description: Go coding standards enforcement
+      owners: ['backend', 'code-quality']
+      required: 2

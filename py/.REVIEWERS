@@ -1,0 +1,81 @@
+# Python ML and Data Services
+# Machine learning pipelines, data processing, and analytics
+# Teams: Data science and ML engineering with platform support
+
+teams:
+  data-science: ['ml-researcher', 'data-analyst', 'stats-expert']
+  ml-engineering: ['ml-ops', 'feature-eng', 'model-deploy']
+  data-platform: ['data-arch', 'pipeline-dev', 'etl-specialist']
+  backend: ['python-backend', 'api-integration']
+  security: ['data-privacy', 'ml-security']
+
+rules:
+  - '*.py':
+      description: Python source code
+      owners: ['ml-engineering']
+      required: 1
+
+  - '**/__main__.py':
+      description: Python application entry points
+      owners: ['ml-engineering', 'data-platform']
+      required: 1
+
+  - 'client/**':
+      description: Client libraries and SDK
+      owners: ['ml-engineering', 'backend']
+      required: 1
+
+  - 'client/client.py':
+      description: Core client implementation
+      owners: ['ml-engineering']
+      required: 1
+
+  - 'fine/**':
+      description: Fine-tuning and model optimization
+      owners: ['data-science', 'ml-engineering']
+      required: 2
+
+  - 'module/**':
+      description: Reusable ML modules and utilities
+      owners: ['ml-engineering']
+      required: 1
+
+  - '**/*model*':
+      description: Machine learning models
+      owners: ['data-science', 'ml-engineering']
+      required: 2
+
+  - '**/*train*':
+      description: Training scripts and pipelines
+      owners: ['data-science']
+      required: 1
+
+  - '**/*test*':
+      description: Python tests and validation
+      owners: ['ml-engineering']
+      required: 1
+
+  - 'BUILD.bazel':
+      description: Python build configuration
+      owners: ['ml-engineering', 'data-platform']
+      required: 1
+
+  - '__init__.py':
+      description: Python package initialization
+      owners: ['ml-engineering']
+      required: 1
+
+  - '**/*data*':
+      description: Data processing and ETL code
+      owners: ['data-platform']
+      required: 1
+
+  - '**/*privacy*':
+      description: Data privacy and protection
+      owners: ['security', 'data-platform']
+      required: 2
+
+  - '**/*secret*':
+      description: Secrets and credentials
+      owners: ['security']
+      required: 2

@@ -1,0 +1,61 @@
+# Protocol Buffer Definitions
+# Cross-service API contracts and data schemas
+# Teams: API design with multi-team approval for breaking changes
+
+teams:
+  api-design: ['api-architect', 'protocol-expert', 'schema-designer']
+  backend: ['go-service-owner', 'grpc-specialist']
+  frontend: ['client-integration', 'ui-data-layer']
+  mobile: ['ios-dev', 'android-dev', 'mobile-api']
+  data: ['data-eng', 'analytics-consumer']
+
+rules:
+  - '*.proto':
+      description: Protocol buffer schema definitions
+      owners: ['api-design']
+      required: 1
+
+  - 'test.proto':
+      description: Test protocol definitions
+      owners: ['api-design', 'backend']
+      required: 2
+
+  - 'BUILD.bazel':
+      description: Protocol buffer build rules
+      owners: ['api-design', 'backend']
+      required: 1
+
+  - '**/*v1*':
+      description: Version 1 API definitions - stable contracts
+      owners: ['api-design', 'backend', 'frontend']
+      required: 3
+
+  - '**/*v2*':
+      description: Version 2 API definitions - breaking changes
+      owners: ['api-design', 'backend']
+      required: 2
+
+  - '**/*service*':
+      description: gRPC service definitions
+      owners: ['api-design', 'backend']
+      required: 2
+
+  - '**/*message*':
+      description: Data message schemas
+      owners: ['api-design']
+      required: 1
+
+  - '**/*enum*':
+      description: Enumeration definitions - breaking change risk
+      owners: ['api-design', 'backend']
+      required: 2
+
+  - '**/*deprecated*':
+      description: Deprecated API elements
+      owners: ['api-design', 'backend', 'frontend']
+      required: 2
+
+  - '**/*auth*':
+      description: Authentication protocol definitions
+      owners: ['api-design', 'backend']
+      required: 2

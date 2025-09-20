@@ -1,0 +1,71 @@
+# GitHub Actions CI/CD Workflows
+# Continuous integration and deployment pipeline configurations
+# Teams: DevOps and security with strict change control
+
+teams:
+  devops: ['ci-cd-lead', 'workflow-eng', 'deployment-expert']
+  security: ['sec-ops', 'pipeline-security', 'audit-automation']
+  platform: ['infra-as-code', 'k8s-deploy', 'cloud-ops']
+  backend: ['service-deploy', 'go-ci']
+  python: ['ml-deploy', 'data-pipeline']
+
+rules:
+  - '*.yml':
+      description: GitHub Actions workflow definitions
+      owners: ['devops']
+      required: 1
+
+  - '*.yaml':
+      description: YAML workflow configurations
+      owners: ['devops']
+      required: 1
+
+  - '**/*deploy*':
+      description: Deployment workflows - production impact
+      owners: ['devops', 'security']
+      required: 2
+
+  - '**/*release*':
+      description: Release and versioning workflows
+      owners: ['devops', 'platform']
+      required: 2
+
+  - '**/*security*':
+      description: Security scanning and compliance checks
+      owners: ['security']
+      required: 2
+
+  - '**/*test*':
+      description: Test execution workflows
+      owners: ['devops', 'backend']
+      required: 1
+
+  - '**/*build*':
+      description: Build and compilation workflows
+      owners: ['devops', 'platform']
+      required: 1
+
+  - '**/*docker*':
+      description: Container build and push workflows
+      owners: ['devops', 'platform']
+      required: 2
+
+  - '**/*secret*':
+      description: Secret management in workflows
+      owners: ['security', 'devops']
+      required: 2
+
+  - '**/*prod*':
+      description: Production environment workflows
+      owners: ['devops', 'security', 'platform']
+      required: 3
+
+  - '**/*schedule*':
+      description: Scheduled workflows and cron jobs
+      owners: ['devops']
+      required: 1
+
+  - '**/*artifact*':
+      description: Artifact publishing workflows
+      owners: ['devops', 'platform']
+      required: 2
