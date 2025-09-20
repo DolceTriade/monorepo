@@ -1,0 +1,78 @@
+# Enterprise Monorepo - Multi-language platform
+# Complex microservices architecture with Go backend, Python ML services, and protocol buffers
+# Teams: 6 specialized teams with cross-functional oversight
+
+teams:
+  backend: ['john-backend', 'sarah-go', 'mike-api']
+  python-ml: ['data-smith', 'ml-jenny', 'analytics-bob']
+  platform: ['infra-lead', 'k8s-expert', 'cloud-arch']
+  security: ['sec-alice', 'audit-dave', 'crypto-expert']
+  tech-leads: ['senior-tom', 'architect-lisa', 'cto-mark']
+  devops: ['deploy-sam', 'ci-cd-anna', 'monitoring-joe']
+
+rules:
+  - '*.go':
+      description: Go backend services and libraries
+      owners: ['backend']
+      required: 1
+
+  - '*.py':
+      description: Python ML and data processing code
+      owners: ['python-ml']
+      required: 1
+
+  - '*.proto':
+      description: Protocol buffer definitions - API contracts
+      owners: ['backend', 'python-ml']
+      required: 2
+
+  - 'BUILD.bazel':
+      description: Bazel build configuration
+      owners: ['platform']
+      required: 1
+
+  - 'MODULE.bazel':
+      description: Bazel module configuration - critical infrastructure
+      owners: ['platform', 'tech-leads']
+      required: 2
+
+  - 'WORKSPACE.bazel':
+      description: Bazel workspace configuration
+      owners: ['platform']
+      required: 1
+
+  - 'go.mod':
+      description: Go module dependencies
+      owners: ['backend', 'tech-leads']
+      required: 2
+
+  - 'third_party/**':
+      description: Third-party dependencies and configurations
+      owners: ['platform', 'security']
+      required: 2
+
+  - '**/*secret*':
+      description: Security-sensitive files
+      owners: ['security']
+      required: 2
+
+  - '**/*key*':
+      description: Cryptographic keys and certificates
+      owners: ['security']
+      required: 2
+
+  - '.github/workflows/**':
+      description: CI/CD pipeline configurations
+      owners: ['devops', 'platform']
+      required: 2
+
+  - 'tools/**':
+      description: Development and build tools
+      owners: ['platform']
+      required: 1
+
+  - '*.md':
+      description: Documentation updates
+      owners: ['tech-leads']
+      required: 1
+
