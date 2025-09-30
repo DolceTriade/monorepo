@@ -5,7 +5,7 @@
 teams:
   backend: ['john-backend', 'sarah-go', 'mike-api']
   python-ml: ['data-smith', 'ml-jenny', 'analytics-bob']
-  platform: ['infra-lead', 'k8s-expert', 'cloud-arch']
+  platform: ['infra-lead', 'k8s-expert', 'cloud-arch', 'haely']
   security: ['sec-alice', 'audit-dave', 'crypto-expert']
   tech-leads: ['senior-tom', 'architect-lisa', 'cto-mark', 'haely']
   devops: ['deploy-sam', 'ci-cd-anna', 'monitoring-joe']
